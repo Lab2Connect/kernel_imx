@@ -11,7 +11,7 @@ DHDCFLAGS += -Wall -Wstrict-prototypes -Dlinux -DLINUX -DBCMDRIVER            \
 	-DEMBEDDED_PLATFORM -DPNO_SUPPORT                                     \
 	-DDHD_DONOT_FORWARD_BCMEVENT_AS_NETWORK_PKT                           \
 	-DCUSTOMER_HW2 -DGET_CUSTOM_MAC_ENABLE	\
-	-DCONFIG_DTS
+	-DCONFIG_DTS -DENABLE_INSMOD_NO_FW_LOAD
 
 #################
 # Common feature
@@ -20,7 +20,7 @@ DHDCFLAGS += -DWL_CFG80211
 # Print out kernel panic point of file and line info when assertion happened
 DHDCFLAGS += -DBCMASSERT_LOG
 
-DHDCFLAGS += -DENABLE_INSMOD_NO_FW_LOAD
+#DHDCFLAGS += -DENABLE_INSMOD_NO_FW_LOAD
 
 # keepalive
 DHDCFLAGS += -DCUSTOM_KEEP_ALIVE_SETTING=28000
@@ -96,7 +96,7 @@ DHDCFLAGS += -DWL_IFACE_COMB_NUM_CHANNELS
 # m: module type driver
 # y: built-in type driver
 ##########################
-DRIVER_TYPE ?= y
+DRIVER_TYPE ?= m
 
 #########################
 # Chip dependent feature

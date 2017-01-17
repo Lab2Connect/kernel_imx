@@ -66,9 +66,9 @@ struct wifi_platform_data {
 #define WIFI_PLAT_NAME2		"bcm4329_wlan"
 #define WIFI_PLAT_EXT		"bcmdhd_wifi_platform"
 
-#ifdef CONFIG_DTS
-struct regulator *wifi_regulator = NULL;
-#endif /* CONFIG_DTS */
+// #ifdef CONFIG_DTS
+// struct regulator *wifi_regulator = NULL;
+// #endif /* CONFIG_DTS */
 
 bool cfg_multichip = FALSE;
 bcmdhd_wifi_platdata_t *dhd_wifi_platdata = NULL;
@@ -159,18 +159,18 @@ int wifi_platform_get_irq_number(wifi_adapter_info_t *adapter, unsigned long *ir
 int wifi_platform_set_power(wifi_adapter_info_t *adapter, bool on, unsigned long msec)
 {
 	int err = 0;
-#ifdef CONFIG_DTS
-	if (on) {
-		err = regulator_enable(wifi_regulator);
-		is_power_on = TRUE;
-	}
-	else {
-		err = regulator_disable(wifi_regulator);
-		is_power_on = FALSE;
-	}
-	if (err < 0)
-		DHD_ERROR(("%s: regulator enable/disable failed", __FUNCTION__));
-#else
+// #ifdef CONFIG_DTS
+// 	if (on) {
+// 		err = regulator_enable(wifi_regulator);
+// 		is_power_on = TRUE;
+// 	}
+// 	else {
+// 		err = regulator_disable(wifi_regulator);
+// 		is_power_on = FALSE;
+// 	}
+// 	if (err < 0)
+// 		DHD_ERROR(("%s: regulator enable/disable failed", __FUNCTION__));
+// #else
 	struct wifi_platform_data *plat_data;
 
 	if (!adapter || !adapter->wifi_plat_data)
@@ -203,7 +203,7 @@ int wifi_platform_set_power(wifi_adapter_info_t *adapter, bool on, unsigned long
 	else
 		is_power_on = FALSE;
 
-#endif /* CONFIG_DTS */
+// #endif  CONFIG_DTS
 
 	return err;
 }
@@ -311,6 +311,13 @@ static int wifi_plat_dev_drv_probe(struct platform_device *pdev)
 	adapter = &dhd_wifi_platdata->adapters[0];
 	adapter->wifi_plat_data = (struct wifi_platform_data *)(pdev->dev.platform_data);
 
+	DHD_INFO(("%s wifi platform data %p\n", __FUNCTION__, adapter->wifi_plat_data));
+
+	//FIXME: Workaround for calling asynchronous
+	if (adapter->wifi_plat_data == NULL) {
+		return 0;
+	}
+
 	resource = platform_get_resource_byname(pdev, IORESOURCE_IRQ, "bcmdhd_wlan_irq");
 	if (resource == NULL)
 		resource = platform_get_resource_byname(pdev, IORESOURCE_IRQ, "bcm4329_wlan_irq");
@@ -320,11 +327,11 @@ static int wifi_plat_dev_drv_probe(struct platform_device *pdev)
 	}
 
 #ifdef CONFIG_DTS
-	wifi_regulator = regulator_get(&pdev->dev, "wlreg_on");
-	if (wifi_regulator == NULL) {
-		DHD_ERROR(("%s regulator is null\n", __FUNCTION__));
-		return -1;
-	}
+	// wifi_regulator = regulator_get(&pdev->dev, "wlreg_on");
+	// if (wifi_regulator == NULL) {
+	// 	DHD_ERROR(("%s regulator is null\n", __FUNCTION__));
+	// 	return -1;
+	// }
 #if defined(OOB_INTR_ONLY) && defined (HW_OOB)
 	/* This is to get the irq for the OOB */
 	gpio = of_get_gpio(pdev->dev.of_node, 0);
@@ -366,7 +373,7 @@ static int wifi_plat_dev_drv_remove(struct platform_device *pdev)
 	}
 
 #ifdef CONFIG_DTS
-	regulator_put(wifi_regulator);
+	// regulator_put(wifi_regulator);
 #endif /* CONFIG_DTS */
 	return 0;
 }
@@ -427,7 +434,7 @@ static int wifi_platdev_match(struct device *dev, void *data)
 	struct platform_device *pdev = to_platform_device(dev);
 
 	if (strcmp(pdev->name, name) == 0) {
-		DHD_ERROR(("found wifi platform device %s\n", name));
+		DHD_INFO(("%s found wifi platform device %s\n", __FUNCTION__, name));
 		return TRUE;
 	}
 
@@ -497,7 +504,7 @@ static int wifi_ctrlfunc_register_drv(void)
 
 
 #ifdef CONFIG_DTS
-	wifi_plat_dev_probe_ret = platform_driver_register(&wifi_platform_dev_driver);
+//	wifi_plat_dev_probe_ret = platform_driver_register(&wifi_platform_dev_driver);
 #endif /* CONFIG_DTS */
 
 	/* return probe function's return value if registeration succeeded */
@@ -766,7 +773,7 @@ static int dhd_wifi_platform_load()
 {
 	int err = 0;
 
-		wl_android_init();
+	wl_android_init();
 
 	if ((err = dhd_wifi_platform_load_usb()))
 		goto end;

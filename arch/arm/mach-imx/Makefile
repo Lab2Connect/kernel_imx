@@ -134,3 +134,6 @@ obj-$(CONFIG_SOC_VF610) += clk-vf610.o mach-vf610.o
 obj-$(CONFIG_SOC_LS1021A) += mach-ls1021a.o
 
 obj-y += devices/
+
+# BROADCOM platform device driver
+obj-$(CONFIG_BCM433x) += board-imx6-bcm433x.o
